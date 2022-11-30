@@ -6,6 +6,10 @@ from collections import deque
 # from machine import ADC,Pin
 from statistics import mean
 
+if __name__ != "__main__":
+    from modules import commonLib as common
+else:
+    import commonLib as common
 
 class ADC:
     def __init__(self, pin):
@@ -90,7 +94,7 @@ def processStats(decibel):
 
 
 def displayStats():
-    print(stats)
+    common.display(stats)
 
 
 def run():
@@ -112,3 +116,7 @@ def run():
         displayStats()
 
         # print (f"{decibel} db")
+        
+        
+if __name__ == "__main__":
+    run()

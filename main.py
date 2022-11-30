@@ -1,6 +1,6 @@
-from commonLib import commonLib as common
-from decibelDisplay import decibelDisplay as decibel
-from timeDisplay import timeDisplay as time
+from modules import commonLib as common
+from modules import decibelDisplay as decibel
+from modules import timeDisplay as time
 
 options = {
     "dB Meter": decibel,
