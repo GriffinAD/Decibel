@@ -116,7 +116,5 @@ def run():
         displayStats()
 
         # print (f"{decibel} db")
-        
-        
 if __name__ == "__main__":
     run()
