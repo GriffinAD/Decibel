@@ -1,0 +1,97 @@
+
+#from collections import *
+import cProfile
+
+class deque(list):
+
+    def __init__(self, maxlen = 0):
+        #self.iterable = iterable
+        self.maxlen = maxlen
+        ##print (self.iterable)
+    
+    # def __str__(self):
+    #     return self.iterable
+    
+    # def __iter__(self):
+    #     yield self.iterable
+    
+    def pop(self):
+        if len(self)>0:
+            return self.pop()
+        else:
+            raise IndexError ("pop from an empty deque")
+            return None
+        
+    def popleft(self):
+        if len(self)>0:
+            v=self[0]
+            del self[0]
+            return v
+        
+        else:
+            #raise IndexError ("pop from an empty deque")
+            return None
+        
+    def appendleft(self, value):
+        if len(self) >= self.maxlen:
+            del self[-1]
+            #print(p[10000])
+        self=[value, *self] #.insert(0, value)
+        print (self)
+        
+    def append(self, value):
+        if len(self) >= self.maxlen:
+            self.popleft()
+        super(deque,self).append(value) 
+    
+    def clear(self):
+        self.clear()
+        
+    def reverse(self):
+        self.reverse() 
+     
+x=deque(maxlen = 11)
+
+for l in range (0,11):
+    x.append(l)
+
+
+print (len(x))  
+
+
+
+def test():
+    for t in range(0,10):
+        #x.append("2")
+        #x.pop()
+        x.appendleft("9")
+        #x.popleft()
+    print (len(x))
+
+p = cProfile.Profile()
+p.runcall(test)
+p.print_stats()
+
+
+
+
+
+# for t in range(0,100000):
+#     x.append("1")
+#     x.pop()
+#     x.appendleft("9")
+#     x.popleft()
+
+# x.append(1)
+
+# x.appendleft(9)
+
+# print (x.iterable)
+
+# x.reverse()
+
+# print (x.iterable)
+
+# x.clear()
+
+#print (x.iterable)
