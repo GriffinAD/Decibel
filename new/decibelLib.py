@@ -1,8 +1,9 @@
-from array import array
-from ulab.numpy import mean
+#from array import array
+from ulab import numpy as np
+import math
 
 from analogio import AnalogIn
-
+import board
 import asyncio
 from collections import deque
 
@@ -19,7 +20,7 @@ class ADC:
             
 
         def read(self):
-            raw=analog_in.value
+            raw=self.analog_in.value
             
             return raw
 
@@ -31,17 +32,16 @@ class Pin:
     def read(self):
         return
 
-
-        
+   
 class Decibel:
     #rounding = 0
     #stats = 0
-    def __init__(self):
+    def __init__(self, ):
         self.rounding = 0
         self.soundSensorPin = ADC(board.A2)  # this pin read the analog voltage from the sound level meter
         self.vREF = 5.0  # voltage on AREF pin,default:operating voltage
         self.offset = 0  # offset value for calibration
-        self.stats = None
+        self.stats = self.DecibelStats
 
     class DecibelStats:
         stats = None
@@ -53,7 +53,7 @@ class Decibel:
         def __str__(self):
             return f"db:{self.dec} sampleMin:{self.sampleMin()}  sampleMax:{self.sampleMax()}  min:{self.overallMin()}  max:{self.overallMax()}. avg:{self.avg()}"
 
-        def setDecibel(self, dec):
+        def SetDecibel(self, dec):
             self.dec = dec
 
             if self.__min == 0 or self.__min >= dec:
@@ -77,10 +77,10 @@ class Decibel:
             return round(max(self.__storage), self.outer.rounding)
 
         def avg(self):
-            return round(mean(self.__storage), self.outer.rounding)
+            return round(np.mean(np.array(self.__storage)) , self.outer.rounding)
 
 
-    def readDecibel(self):
+    def ReadDecibel(self):
 
         readings = []
 
@@ -89,27 +89,27 @@ class Decibel:
             # read value from sensor
             voltageValue = self.soundSensorPin.read() 
             #decibelValue = (voltageValue / 1024 * self.vREF) * 50
-            decibelValue=(raw / 1024.0) * 2) + 10
+            decibelValue=((voltageValue / 1024.0) * 2.0) + 10.0
             # read value into array
             readings.append(decibelValue + self.offset)
 
         # calculate averge
-        decibel = round(mean(readings), self.rounding)
+        decibel = round(np.mean(readings), self.rounding)
 
         # time.sleep(0.1)
 
         return decibel
 
 
-    def processStats(self, decibel):
-        self.stats.setDecibel(decibel)
+    def ProcessStats(self,decibel):
+        self.stats.SetDecibel(decibel)  # type: ignore
 
 
-    def displayStats(self):
-        decibelDisplay.ShowDecibel(self.avg()
-        #common.display(self.stats)
+    def DisplayStats(self):
+        #decibelDisplay.ShowDecibel(self.avg())
+        common.display(self.stats)
 
-    def init(self):
+    def Init(self):
         self.stats = self.DecibelStats(self)
 
     async def run(self):
@@ -119,11 +119,11 @@ class Decibel:
 
         # main loop
         while True:
-            decibel = self.readDecibel()
+            decibel = self.ReadDecibel()
 
-            self.processStats(decibel)
+            self.ProcessStats(decibel)
 
-            self.displayStats()
+            self.DisplayStats()
             
             # so we can cancel
             await asyncio.sleep(0.0)
