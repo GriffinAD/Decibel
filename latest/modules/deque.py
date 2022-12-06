@@ -37,20 +37,22 @@ class deque(UserList):
             return value
         
         
-    def insert(self, i: int, item):
+    def insert(self, index: int, item):
         """insert new item at index
             items will pop off right if more than maxitems
         """
-        self.data.insert(i, item)
+        if len(self.data) > index:
+            self.data.insert(index, item)
         if self.canpop():
             return self.pop()
         
         
-    def insertleft(self, i: int, item):
+    def insertleft(self, index: int, item):
         """insert new item at index
             items will pop off left if more than maxitems
         """
-        self.data.insert(i, item)
+        if len(self.data) > index:
+             self.data.insert(index, item)
         if self.canpop():
             return self.popleft()
         
