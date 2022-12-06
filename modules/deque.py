@@ -66,6 +66,7 @@ class deque(UserList):
         self.data.append(item)
 
     def appendleft(self, item):
+
         """
         append item at start of list
             items will pop off right if more than maxitems
@@ -91,20 +92,20 @@ class deque(UserList):
             func(item)
 
 
-#arr = []
+# arr = []
 
-#x = deque(arr, maxlen=100000)
+# x = deque(arr, maxlen=100000)
 
-#for l in range(0, 100000):
+# for l in range(0, 100000):
 #    x.append(l)
 
-#x.popleft()
-#x.popleft()
+# x.popleft()
+# x.popleft()
 
-#print(len(x))
+# print(len(x))
 
 
-#def test():
+# def test():
 #    for t in range(0, 100000):
 #        x.append(2)
 #        x.pop()
@@ -113,6 +114,6 @@ class deque(UserList):
 #    # print (len(x))
 
 
-#p = cProfile.Profile()
-#p.runcall(test)
-#p.print_stats()
+# p = cProfile.Profile()
+# p.runcall(test)
+# p.print_stats()
