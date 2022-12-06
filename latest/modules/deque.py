@@ -15,7 +15,8 @@ class deque(UserList):
         
     def __setitem__(self, index, item):
         """set item at index"""
-        self.data[index] = item
+        if len(self.data) >= index:
+            self.data[index] = item
         
     def canpop(self):
         """test list to see if we can pop a value"""
