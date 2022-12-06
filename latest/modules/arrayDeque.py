@@ -1,17 +1,16 @@
 import cProfile
-from collections import UserList
+import array as arr
 
-
-class deque(UserList):
+class dequeX(arr.array):
     """extended list class that can deque items from left or right end"""
 
     def __init__(self, iterable=[], maxlen: int = 0) -> None:
         """
         constructor
-            iterable: existing list, or will create a new empty list
+            iterable: existing array, or will create a new empty list
             maxlen: maximum number of items the list can hold
         """
-        super().__init__(item for item in iterable)
+        #super().__init__(item for item in iterable)
         self.maxlen = maxlen
         "attribute C.a doc-string (1)"
 
@@ -91,28 +90,29 @@ class deque(UserList):
             func(item)
 
 
-#arr = []
+aa = arr.array('i', [1])
+print (aa)
 
-#x = deque(arr, maxlen=100000)
+x = dequeX(arr, maxlen=100000)
 
-#for l in range(0, 100000):
-#    x.append(l)
+for l in range(0, 100000):
+    x.append(l)
 
-#x.popleft()
-#x.popleft()
+x.popleft()
+x.popleft()
 
-#print(len(x))
-
-
-#def test():
-#    for t in range(0, 100000):
-#        x.append(2)
-#        x.pop()
-#        x.appendleft(9)
-#        x.popleft()
-#    # print (len(x))
+print(len(x))
 
 
-#p = cProfile.Profile()
-#p.runcall(test)
-#p.print_stats()
+def test():
+    for t in range(0, 100000):
+        x.append(2)
+        x.pop()
+        x.appendleft(9)
+        x.popleft()
+    # print (len(x))
+
+
+p = cProfile.Profile()
+p.runcall(test)
+p.print_stats()

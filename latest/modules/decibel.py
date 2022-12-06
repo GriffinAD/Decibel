@@ -1,38 +1,112 @@
-from deque import deque 
-from statistics import mean
+#from array import array
+#from ulab import numpy as np
+import math
 
-class DecibelStats:
-        stats = None
-        def __init__(self, outer):
-            self.__storage = deque([], maxlen=25)
-            self.__min = 0
-            self.__max = 0
-            self.outer = outer
-        def __str__(self):
-            return f"db:{self.dec} sampleMin:{self.sampleMin()}  sampleMax:{self.sampleMax()}  min:{self.overallMin()}  max:{self.overallMax()}. avg:{self.avg()}"
+#from analogio import AnalogIn
+#import board
+import asyncio
+from deque import deque
+from samplestats import SampleStats
 
-        def setDecibel(self, value:float):
-            self.dec = value
 
-            if self.__min == 0 or self.__min >= value:
-                self.__min = value
+if __name__ != "__main__":
+    from modules import commonLib as common
+else:
+    #import commonLib as common
+    print ()
+ 
 
-            if self.__max == 0 or self.__max <= value:
-                self.__max = value
+class ADC:
+        def __init__(self, pin, VREF: float = 5.0):
+            self.pin = pin
+            #self.analog_in = AnalogIn(pin)
+            self.VREF=VREF
 
-            self.__storage.appendleft(value)
+        def read(self):
+            #raw=self.analog_in.value
+            raw= 23357
+            return raw
 
-        def overallMin(self):
-            return self.__min
 
-        def overallMax(self):
-            return self.__max
+class Pin:
+    def __init__(self, pin):
+        self.pin = pin
+        
+    def read(self):
+        return
 
-        def sampleMin(self):
-            return round(min(self.__storage), self.outer.rounding)
+   
+class SensorStats:
+    #rounding = 0
+    #stats = 0
+    def __init__(self, rounding:int = 0,
+    calibrationOffset: int = 0, 
+    sampleWindow: int = 0, 
+    soundSensorPin: ADC = ADC(1,5.0)):
+        self.rounding = rounding
+        self.soundSensorPin = soundSensorPin  # this pin reads the analog voltage from the sound level meter
+        self.calibrationOffset = calibrationOffset  # offset value for calibration
+        self.sampleWindow = sampleWindow
+        arr = deque([], self.sampleWindow)
+        self.stats = SampleStats(arr)
 
-        def sampleMax(self):
-            return round(max(self.__storage), self.outer.rounding)
 
-        def avg(self):
-            return round(mean(self.__storage), self.outer.rounding)
+    def ReadDecibel(self):
+    
+        voltageValue = self.soundSensorPin.read() 
+            #decibelValue = (voltageValue / 1024 * self.vREF) * 50
+        decibelValue=((voltageValue / 1024.0) * 2.0) + 10.0
+        self.stats.setDecibel(decibelValue)
+        
+        #decibel = round(decibelValue, self.rounding)
+
+        return decibelValue
+
+
+    def ProcessStats(self,decibel):
+        self.stats.setDecibel(decibel)  # type: ignore
+
+
+    def DisplayStats(self):
+        #decibelDisplay.ShowDecibel(self.avg())
+        x=getattr(self.stats,"overallMin")()
+        print(x)
+
+    def Init(self):
+        self.stats = self.DecibelStats(self)
+
+    async def run(self):
+
+        # initialize stats
+        #self.stats = self.DecibelStats(self,[])
+
+        # main loop
+        while True:
+            decibel = self.ReadDecibel()
+
+            self.ProcessStats(decibel)
+
+            self.DisplayStats()
+            
+            # so we can cancel
+            await asyncio.sleep(0.0)
+            
+            # print (f"{decibel} db")
+            
+            
+            
+if __name__ == "__main__":
+
+    async def main():
+        dec = Decibel()
+        task = asyncio.create_task(dec.run())
+
+        await asyncio.sleep(3)
+
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            print("main(): cancel_me is cancelled now")
+
+    asyncio.run(main())
