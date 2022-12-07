@@ -1,46 +1,60 @@
-from deque import deque 
+from deque import deque
 from statistics import mean
 
-class SampleStats:
-        stats = None
-        def __init__(self, storage, rounding: int = 0):
-            self.__storage = storage
-            self.__min = 0
-            self.__max = 0
-            self.rounding = rounding
-            self.value = 0
-        def __str__(self):
-            return f"value:{self. alue}  sampleMin:{self.sampleMin()}  sampleMax:{self.sampleMax()}  min:{self.overallMin()}  max:{self.overallMax()}  avg:{self.avg()}"
 
-        def SetValue(self, value:float):
-            self.value = value
+class SampleStats(deque):
+    stats = None
 
-            if self.__min == 0 or self.__min >= value:
-                self.__min = value
+    def __init__(self, storage, sampleWindow: int = 100, rounding: int = -1):
+        #self.__storage = storage
+        self.__min = 0
+        self.__max = 0
+        self.rounding = rounding
+        self.value = 0
+        
+        super().__init__(storage, sampleWindow)
 
-            if self.__max == 0 or self.__max <= value:
-                self.__max = value
+    def __str__(self):
+        return f"value:{self.value}  sampleMin:{self.sampleMin()}  sampleMax:{self.sampleMax()}  min:{self.overallMin()}  max:{self.overallMax()}  avg:{self.avg()}"
 
-            self.__storage.append(value)
+    def setValue(self, value: float):
+        self.value = value
 
-        def overallMin(self):
-            return self.__min
+        if self.__min == 0 or self.__min >= value:
+            self.__min = value
 
-        def overallMax(self):
-            return self.__max
+        if self.__max == 0 or self.__max <= value:
+            self.__max = value
 
-        def sampleMin(self):
-            return round(min(self.__storage), self.rounding)
+        super().append(value)
 
-        def sampleMax(self):
-            return round(max(self.__storage), self.rounding)
+    def overallMin(self):
+        return self.__min
 
-        def avg(self):
-            return round(mean(self.__storage), self.rounding)
+    def overallMax(self):
+        return self.__max
 
-a= deque([],10)
-a=[1,2,3]
-d=SampleStats(a)
+    def sampleMin(self):
+        return self.round(min(self.data))
+
+    def sampleMax(self):
+        return self.round(max(self.data))
+
+    def avg(self):
+        return self.round(mean(self.data))
+
+    def round(self, value):
+        if self.rounding == -1:
+            return value
+        if self.rounding == 0:
+            return round(value)
+        else:
+            return round(value, self.rounding)
+
+
+# a= deque([],10)
+a = [1, 2, 3]
+d = SampleStats(a, 4)
 d.setValue(6.0)
 print(d)
-#print (d.sampleMax())
+# print (d.sampleMax())
