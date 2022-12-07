@@ -1,17 +1,19 @@
-from deque import deque
+from Deque import Deque
 from statistics import mean
 
 
-class SampleStats(deque):
-    stats = None
+class SampleStats(Deque):
+    """
+    extended deque class that will provde stats over current data window,
+        as well as historic data"""
 
     def __init__(self, storage, sampleWindow: int = 100, rounding: int = -1):
-        #self.__storage = storage
+
         self.__min = 0
         self.__max = 0
         self.rounding = rounding
         self.value = 0
-        
+
         super().__init__(storage, sampleWindow)
 
     def __str__(self):
@@ -52,9 +54,9 @@ class SampleStats(deque):
             return round(value, self.rounding)
 
 
-# a= deque([],10)
-a = [1, 2, 3]
-d = SampleStats(a, 4)
-d.setValue(6.0)
-print(d)
-# print (d.sampleMax())
+# # a= deque([],10)
+# a = [1, 2, 3]
+# d = SampleStats(a, 4)
+# d.setValue(6.0)
+# print(d)
+# # print (d.sampleMax())

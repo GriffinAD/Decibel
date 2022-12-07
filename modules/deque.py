@@ -2,7 +2,7 @@ import cProfile
 from collections import UserList
 
 
-class deque(UserList):
+class Deque(UserList):
     """extended list class that can deque items from left or right end"""
 
     def __init__(self, iterable=[], maxlen: int = 0) -> None:
@@ -13,7 +13,7 @@ class deque(UserList):
         """
         super().__init__(item for item in iterable)
         self.maxlen = maxlen
-        "attribute C.a doc-string (1)"
+        "attribute for maximum length of data window"
 
     def __setitem__(self, index: int, item):
         """set item at index"""
@@ -76,7 +76,7 @@ class deque(UserList):
         self.data = [item, self.data]
 
     def extend(self, other):
-        """ """
+        """extend data set with more data"""
         if isinstance(other, type(self)):
             self.data.extend(other)
         else:
@@ -87,7 +87,7 @@ class deque(UserList):
         self.data.reverse()
 
     def foreach(self, func):
-        """ """
+        """iterate using a passed in function"""
         for item in self:
             func(item)
 

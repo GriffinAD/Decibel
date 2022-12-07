@@ -10,9 +10,9 @@ class SampleStatsPrev:
             self.rounding = rounding
             self.value = 0
         def __str__(self):
-            return f"value:{self. alue}  sampleMin:{self.sampleMin()}  sampleMax:{self.sampleMax()}  min:{self.overallMin()}  max:{self.overallMax()}  avg:{self.avg()}"
+            return f"value:{self.value}  sampleMin:{self.sampleMin()}  sampleMax:{self.sampleMax()}  min:{self.overallMin()}  max:{self.overallMax()}  avg:{self.avg()}"
 
-        def SetValue(self, value:float):
+        def setValue(self, value:float):
             self.value = value
 
             if self.__min == 0 or self.__min >= value:
