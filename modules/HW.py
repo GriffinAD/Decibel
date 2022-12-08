@@ -4,6 +4,7 @@ import config
 try:
     from analogio import AnalogIn
     import board
+    import digitalio
 except NotImplementedError or ImportError or ModuleNotFoundError:
     if not config.Test:
         print("This script can only be run in blabla environment")
@@ -41,3 +42,27 @@ class Pin:
 
     def read(self):
         return
+
+
+class KeyInput:
+    # The pins we'll use, each will have an internal pullup
+    keypress_pins = [board.GP15, board.GP19,board.GP21]
+    # Our array of key objects
+    key_pin_array = []
+    # The Keycode sent for each button, will be paired with a control key
+
+    def __init__(self):
+        
+        # Make all pin objects inputs with pullups
+        for pin in self.keypress_pins:
+            key_pin = digitalio.DigitalInOut(pin)
+            key_pin.direction = digitalio.Direction.INPUT
+            key_pin.pull = digitalio.Pull.UP
+            self.key_pin_array.append(key_pin)
+    
+    def getKeyValue(self):
+        # Check each pin
+        for key_pin in self.key_pin_array:
+            if not key_pin.value:  # Is it grounded?
+                keyValue = self.key_pin_array.index(key_pin)
+                return keyValue

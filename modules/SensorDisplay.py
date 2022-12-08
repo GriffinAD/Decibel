@@ -1,25 +1,33 @@
 import asyncio
 from Deque import Deque
 from SampleStats import SampleStats
+from SensorStats import SensorStats
 from HW import ADC
+from modules.Display import Display
+from HW import KeyInput
 
 sensor = ADC(pin = board.A2, VREF = 5.0)
+pages = ("avg", "min", "max", "datetime")
 
 class SensorDisplay:
-    def __init__(
+    def __init__(self, stats):
+        
         self.stats = SensorStats(
             rounding = -1,
             calibrationOffset= 0,
             sampleWindow = 100,
             sensor = sensor)
 
-      self.display = Display()
-
-      def getValue(self):
-            value = self.DisplayStats("avg")
-            
-      
-      async def run(self):
+        self.display = Display()
+    
+        self.keys = KeyInput()
+    
+        self.func = pages[0]
+        
+        self.page = 0
+        
+    
+    async def run(self):
 
         # initialize stats
         # self.stats = self.DecibelStats(self,[])
@@ -28,43 +36,53 @@ class SensorDisplay:
         while True:
             decibel = self.stats.readValue()
 
-            self.ProcessStats(decibel)
+            self.stats.processStats(decibel)
 
-            #self.DisplayStats()
-
-            # so we can cancel
             await asyncio.sleep(0.0)
 
             # print (f"{decibel} db")
 
             
-        async def display(self, func):
-            value = self.calcStats(func)
-            color = ProcessColor()
+    async def displayValue(self):
+        
+        while True:
+            value = self.stats.calcStats(self.func)
+            color = self.processColor(value)
             
+            await asyncio.sleep(0.0)
+        
+    
+    async def checkKeys(self):
+        while True:
+            key = self.keys.getKeyValue()
             
-     
-     
-     
-    def ProcessColor(db):
-        if db <= 40:
-            dcolor=0x00ff00
-        elif db <= 50:
-            dcolor= 0x12ff00
+            print (key)
+            
+            self.page = (self.page + 1) % 3
+            func=pages[self.page]
+            
+            await asyncio.sleep(0.0)
+            
+
+    def processColor(self, db):
+        dbcolor = 0x00ff00  # default value
+        
+        if db <= 50:
+            dbcolor= 0x12ff00
         elif db <= 60:
-            dcolor=0x48ff00
+            dbcolor=0x48ff00
         elif db <= 70:
-            dcolor=0xb6ff00
+            dbcolor=0xb6ff00
         elif db <= 80:
-            dcolor=0xff6d00
+            dbcolor=0xff6d00
         elif db <= 90:
-            dcolor=0xff3600
+            dbcolor=0xff3600
         elif db <= 100:
-            dcolor=0xff1200
+            dbcolor=0xff1200
         elif db <= 110:
-            dcolor=0xff0000
+            dbcolor=0xff0000
         elif db > 110:
-            dcolor=0xff006d
+            dbcolor=0xff006d
             
-       return dcolor
+        return dbcolor
 

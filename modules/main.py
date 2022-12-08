@@ -1,4 +1,5 @@
-
+from adafruit_bitmap_font import bitmap_fonty
+from HW import KeyInput
 pages = ("avg", "min", "max", "datetime")
 
 
@@ -32,23 +33,23 @@ while True:
      
         
     
-    if pageID == 0:
-        showSystem.showDateTimePage(line1, line2, line3)
-    if pageID == 1:
-        line3.text = ""
-        showSystem.showSetListPage(line1, line2, selectSettingOptions)
-    if pageID == 2 and selectSettingOptions == 0:
-        line1.text = ""
-        showSystem.timeSettingPage(line2, line3, timeSettingLabel, timeTemp)
+#     if pageID == 0:
+#         showSystem.showDateTimePage(line1, line2, line3)
+#     if pageID == 1:
+#         line3.text = ""
+#         showSystem.showSetListPage(line1, line2, selectSettingOptions)
+#     if pageID == 2 and selectSettingOptions == 0:
+#         line1.text = ""
+#         showSystem.timeSettingPage(line2, line3, timeSettingLabel, timeTemp)
         
         
 
-def init:
-    d = DisplyPages()
+# def init:
+#     d = DisplyPages()
     
-    displayio.groups.append(d.initPage))
-    displayio.groups.append(d.dbPage())
-    displayio.groups.append(d.dateTimePage())
+#     displayio.groups.append(d.initPage))
+#     displayio.groups.append(d.dbPage())
+#     displayio.groups.append(d.dateTimePage())
 
     
 
@@ -67,7 +68,7 @@ FONTsmall = bitmap_font.load_font(fontSmall)
         
 class DisplayPages():
 
-    def initPage:
+    def initPage(self):
     
         g = displayio.Group()
         
@@ -85,7 +86,7 @@ class DisplayPages():
         return g
 
 
-    def dbPage:
+    def dbPage(self):
     
         g = displayio.Group()
         

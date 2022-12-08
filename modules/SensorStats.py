@@ -23,7 +23,7 @@ class SensorStats(SampleStats):
 
     def readValue(self):
 
-        voltageValue = self.sensorPin.read()
+        voltageValue = self.sensor.read()
         # value = (voltageValue / 1024 * self.vREF) * 50
         value = ((voltageValue / 1024.0) * 2.0) + 10.0
 
@@ -49,11 +49,11 @@ class SensorStats(SampleStats):
 
         # main loop
         while True:
-            decibel = self.ReadValue()
+            decibel = self.readValue()
 
-            self.ProcessStats(decibel)
+            self.processStats(decibel)
 
-            self.DisplayStats()
+            print(self.calcStats("avg"))
 
             # so we can cancel
             await asyncio.sleep(0.0)
