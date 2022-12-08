@@ -7,13 +7,13 @@ from HW import ADC
 class SensorStats(SampleStats):
     def __init__(
         self,
-        rounding: int = 3,
+        rounding: int = -1,
         calibrationOffset: int = 0,
         sampleWindow: int = 0,
-        soundSensorPin: ADC = ADC(1, 5.0),
+        sensor: ADC = ADC(1, 5.0),
     ):
         self.rounding = rounding
-        self.soundSensorPin = soundSensorPin  # this pin reads the analog voltage from the sound level meter
+        self.sensor = sensor  # this pin reads the analog voltage from the sound level meter
         self.calibrationOffset = calibrationOffset  # offset value for calibration
         self.sampleWindow = sampleWindow
 
@@ -21,22 +21,22 @@ class SensorStats(SampleStats):
             storage=[], sampleWindow=self.sampleWindow, rounding=self.rounding
         )
 
-    def ReadValue(self):
+    def readValue(self):
 
-        voltageValue = self.soundSensorPin.read()
+        voltageValue = self.sensorPin.read()
         # value = (voltageValue / 1024 * self.vREF) * 50
         value = ((voltageValue / 1024.0) * 2.0) + 10.0
 
         return value
 
-    def ProcessStats(self, decibel):
+    def processStats(self, decibel):
         super().setValue(decibel)  # type: ignore
 
-    def DisplayStats(self):
+    def calcStats(self, method = "avg"):
         # decibelDisplay.ShowDecibel(self.avg())
-        value = getattr(super(), "avg")()
+        value = getattr(super(), method)()
 
-        print(value)
+        return(value)
 
     def ReInit(self):
         pass
