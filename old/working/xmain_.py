@@ -221,7 +221,7 @@ _, height, _, dy = FONTlarge.get_bounding_box()
 
 line1 = label.Label(FONTlarge, color=0x440000, scale=1)
 line2 = label.Label(FONTsmall, color=0x002200, scale=1)
-g = displayio.Group()
+
 g.append(line1)
 g.append(line2)
 

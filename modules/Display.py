@@ -1,15 +1,25 @@
-from adafruit_display_text import label
-from adafruit_display_text import scrolling_label
-import board
-import displayio
-import framebufferio
-import rgbmatrix
-import terminalio
-import time
-import displaySubsystem
-import keyInput
-from dirver_buzzer import *
-from dirver_lightSensor import *
+import config
+import sys
+
+try:
+    from adafruit_display_text import label
+    from adafruit_display_text import scrolling_label
+    import board
+    import displayio
+    import framebufferio
+    import rgbmatrix
+    import terminalio
+    import time
+    import displaySubsystem
+    import keyInput
+    from dirver_buzzer import *
+    from dirver_lightSensor import *
+except NotImplementedError or ImportError or ModuleNotFoundError:
+    if not config.Test:
+        print("This script can only be run in blabla environment")
+        sys.exit(1)
+    else:
+        print("Test mode...")
 
 
 class Display:

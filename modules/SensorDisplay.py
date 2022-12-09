@@ -3,11 +3,15 @@ from Deque import Deque
 from SampleStats import SampleStats
 from SensorStats import SensorStats
 from HW import ADC
-from modules.Display import Display
+from Display import Display
 from HW import KeyInput
+from DispalyPages import DisplayPages
+import displayio
 
-sensor = ADC(pin = board.A2, VREF = 5.0)
-pages = ("avg", "min", "max", "datetime")
+#sensor = ADC(pin = board.A2, VREF = 5.0)
+sensor = ADC(pin = 1, VREF = 5.0)
+
+pages = ("avg", "overallMin", "overallMax", "datetime")
 
 class SensorDisplay:
     def __init__(self, stats):
@@ -19,6 +23,8 @@ class SensorDisplay:
             sensor = sensor)
 
         self.display = Display()
+        
+        self.displayPages = DisplayPages()
     
         self.keys = KeyInput()
     
@@ -27,7 +33,7 @@ class SensorDisplay:
         self.page = 0
         
     
-    async def run(self):
+    async def getStats(self):
 
         # initialize stats
         # self.stats = self.DecibelStats(self,[])
@@ -49,7 +55,14 @@ class SensorDisplay:
             value = self.stats.calcStats(self.func)
             color = self.processColor(value)
             
+            #self.displayPages.dbPage().lin [].line1.Text= value
+            
+            line1 = Group(2)
+            
+            
             await asyncio.sleep(0.0)
+            
+            print (value)
         
     
     async def checkKeys(self):
@@ -59,7 +72,12 @@ class SensorDisplay:
             print (key)
             
             self.page = (self.page + 1) % 3
-            func=pages[self.page]
+            self.func = pages[self.page]
+            
+            displayio.Group().append(self.displayPages.dbPage())
+            
+            
+            print (self.func)
             
             await asyncio.sleep(0.0)
             
@@ -86,3 +104,25 @@ class SensorDisplay:
             
         return dbcolor
 
+
+    async def start(self):
+        # Create a "cancel_me" Task
+        
+        # run all async
+        task = asyncio.gather(
+            asyncio.create_task(self.getStats()), # get a value
+            asyncio.create_task(self.displayValue()), # update display
+            asyncio.create_task(self.checkKeys()) # process key press
+        )
+
+        # Wait for 1 second
+        await asyncio.sleep(3)
+
+        task.cancel()
+        try:
+            await (task)
+        except asyncio.CancelledError:
+            print("main(): cancel_me is cancelled now")
+            
+s = SensorDisplay([])            
+asyncio.run(s.start())
