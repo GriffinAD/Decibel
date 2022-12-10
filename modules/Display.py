@@ -1,6 +1,8 @@
 import config
 import sys
 
+from displayio import Group
+
 try:
     from adafruit_display_text import label
     from adafruit_display_text import scrolling_label
@@ -93,9 +95,12 @@ class Display:
         )
 
         # Associate the RGB matrix with a Display so that we can use displayio features
-        display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
-        display.rotation = 0
+        self.display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
+        self.display.rotation = 0
         #display.brightness=0.6
 
         g = displayio.Group()
-        display.show(g)
+        self.display.show(g)
+        
+    def Show(self, group:Group):
+        self.display.show(group)

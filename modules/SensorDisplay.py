@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 from Deque import Deque
 from SampleStats import SampleStats
 from SensorStats import SensorStats
@@ -7,6 +8,9 @@ from Display import Display
 from HW import KeyInput
 from DispalyPages import DisplayPages
 import displayio
+from adafruit_display_text import label
+import datetime
+from displayio import Group
 
 #sensor = ADC(pin = board.A2, VREF = 5.0)
 sensor = ADC(pin = 1, VREF = 5.0)
@@ -25,6 +29,16 @@ class SensorDisplay:
         self.display = Display()
         
         self.displayPages = DisplayPages()
+        
+        self.selectedMenu = 0
+    
+        self.groups=displayio.Group()
+        self.groups.append(self.displayPages.initPage())
+        self.groups.append(self.displayPages.dbPage())
+        self.groups.append(self.displayPages.dateTimePage())
+        
+        self.currentGroup = self.groups[self.selectedMenu]
+        
     
         self.keys = KeyInput()
     
@@ -52,17 +66,45 @@ class SensorDisplay:
     async def displayValue(self):
         
         while True:
-            value = self.stats.calcStats(self.func)
-            color = self.processColor(value)
             
-            #self.displayPages.dbPage().lin [].line1.Text= value
+            g = self.groups
             
-            line1 = Group(2)
+            if 0 <= self.selectedMenu <= 4:                    
+                value = self.stats.calcStats(self.func)
+                color = self.processColor(value)
             
+                label1:label.Label = g[1].__getitem__(0) 
+                label2:label.Label = g[1].__getitem__(1) 
+                label3:label.Label = g[1].__getitem__(2) 
+                label1.text = "value"
+                label2.color = color
+                if self.page>0:
+                    label3.text = pages[self.page][:2]
+
+                label3.text=""
+        
+            elif self.selectedMenu == 5:
+                label1:label.Label = g[2].__getitem__(0) 
+                label2:label.Label = g[2].__getitem__(1) 
+                label3:label.Label = g[2].__getitem__(2) 
+                
+                days = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday" )
+
+                # t = tc.datetime  
+                # date =  "%04d" % t.tm_year + '-' + "%02d" % t.tm_mon + '-' + "%02d" % t.tm_mday
+                # dayOfTime = "%02d" % t.tm_hour + ':' + "%02d" % t.tm_min + ':' + "%02d" % t.tm_sec
+                
+                t = datetime.datetime.now() #rtc.datetime  
+                date =  "%04d" % t.year + '-' + "%02d" % t.month + '-' + "%02d" % t.day
+                dayOfTime = "%02d" % t.hour + ':' + "%02d" % t.minute + ':' + "%02d" % t.second
+                label1.text = date
+                label2.text = dayOfTime
+                label3.text = str(t.weekday)
+                
+            self.display.display.show(self.currentGroup)    
             
             await asyncio.sleep(0.0)
             
-            print (value)
         
     
     async def checkKeys(self):
@@ -74,7 +116,8 @@ class SensorDisplay:
             self.page = (self.page + 1) % 3
             self.func = pages[self.page]
             
-            displayio.Group().append(self.displayPages.dbPage())
+            self.currentGroup=self.groups[]
+            #displayio.Group().append(self.displayPages.dbPage())
             
             
             print (self.func)

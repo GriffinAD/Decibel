@@ -1,12 +1,14 @@
 import config
 import sys
 
+from displayio import Group
+
 try:
+    import displayio
     from adafruit_bitmap_font import bitmap_font
     from adafruit_display_text import label
     from adafruit_display_text import scrolling_label
     import board
-    import displayio
     import framebufferio
     import rgbmatrix
     import terminalio
@@ -24,9 +26,9 @@ except NotImplementedError or ImportError or ModuleNotFoundError:
 
 
 
-fontLarge = "/lib/fonts/Tahoma-bold-32.bdf"
-fontMedium = "/lib/fonts/Tahoma-bold-16.bdf"
-fontSmall = "/lib/fonts/Tahoma-bold-12.bdf"
+fontLarge = "old/working/lib/fonts/Tahoma-bold-32.bdf"
+fontMedium = "old/working/lib/fonts/Tahoma-bold-16.bdf"
+fontSmall = "old/working/lib/fonts/Tahoma-bold-12.bdf"
 
 FONTlarge = bitmap_font.load_font(fontLarge)
 FONTmedium = bitmap_font.load_font(fontMedium)
@@ -40,7 +42,7 @@ class DisplayPages():
         self.ok=True
         
 
-    def initPage(self):
+    def initPage(self) -> Group:
     
         g = displayio.Group()
         
@@ -84,7 +86,7 @@ class DisplayPages():
         return g
         
         
-    def dateTimePage(self,line1,line2,line3):
+    def dateTimePage(self):
     
         g = displayio.Group()
           
