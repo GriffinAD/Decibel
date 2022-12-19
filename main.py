@@ -1,8 +1,9 @@
+from math import log
 from time import sleep
+
+import board
 from analogio import AnalogIn
 from pwmio import PWMOut
-import board
-from math import log
 
 fan = PWMOut(board.GP13, frequency=25000, duty_cycle=26214)
 adc = AnalogIn(board.A2)
@@ -10,8 +11,8 @@ adc = AnalogIn(board.A2)
 
 min_pwm_percent = 40
 max_pwm_percent = 100
-min_sensor_temperature = 25
-max_sensor_temperature = 30
+min_sensor_temp = 25
+max_sensor_temp = 30
 
 prevTemperature = 0
 
@@ -44,14 +45,14 @@ def GetTemperature():
 
 
 def CalcSpeed(temperature):
-    if temperature <= min_sensor_temperature:
+    if temperature <= min_sensor_temp:
         speedVal = min_pwm_percent
-    elif temperature >= max_sensor_temperature:
+    elif temperature >= max_sensor_temp:
         speedVal = max_pwm_percent
     else:
-        tPercent = ((temperature - min_sensor_temperature)) / (max_sensor_temperature - min_sensor_temperature)
+        tPercent = ((temperature - min_sensor_temp)) / (max_sensor_temp - min_sensor_temp)
         speedVal = ((max_pwm_percent - min_pwm_percent) * tPercent) + min_pwm_percent
-    # print(f"speed set: {speedVal} for temp: {temp} C")
+    # print(f"speed set: {speedVal} for temp: {temperature} C")
     return speedVal
 
 
@@ -63,6 +64,3 @@ while True:
         SetFanSpeed(speedVal)
         prevTemperature = temperature
     sleep(2)
-
-# for temp in range (0,101):
-# spd = calcSpeed(temp)
