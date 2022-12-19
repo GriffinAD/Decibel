@@ -1,57 +1,67 @@
-from modules import commonLib as common
-from modules import decibelLib as decibel
-from modules import timeDisplay as time
-import asyncio
-import keyboard
+from time import sleep
+from analogio import AnalogIn
+from pwmio import PWMOut
+import board
+from math import log
 
-options = {
-    "dB Meter": decibel.Decibel,
-    "Time": time,
-}
+fan = PWMOut(board.GP13, frequency=25000, duty_cycle=26214)
+adc = AnalogIn(board.A2)
 
 
-async def main():
-    # main loop
-    while True:
-        keys = list(options)
-        for x in keys:
-            index = keys.index(x)
-            print(f"{index}: {x}")
+maxPercent = 100
+minPercent = 40
+minTemp = 25
+maxTemp = 30
 
-        option = input("select option: ")
-        selected = keys[int(option)]
-        
-        v = options[selected]()
-        
-        task = asyncio.create_task(v.run())
-        
-        while not keyboard.is_pressed('q'):
-            await asyncio.sleep(0)
-                
-            
-        task.cancel()
-                
-        try:
-            await task
-        except asyncio.CancelledError:
-            print("main(): cancel_me is cancelled now")
-        
-        print(f"Selected option was: {selected}")
-# print (f"{decibel} db")
+oldTemp = 0
+
+# Thermistor specs: very generic
+r25 = 10000  # nominal resistance at 25 °C, ohms
+beta = 3950  # β (25/50 °C)
+
+# potential divider resistor, on high side
+r_high = 5600  # ohms
+
+cal = -7
 
 
-# if __name__ == "__main__":
+def setFanSpeed(percent):
+    value = 65535
+    if percent > 0:
+        value = int(65535 / (100 / percent))
+    fan.duty_cycle = value
+    print(f"Fan Speed: {percent} ({value})")
 
-#     async def main():
-#         dec = Decibel()
-#         task = asyncio.create_task(dec.run())
+    return value
 
-#         await asyncio.sleep(3)
 
-#         task.cancel()
-#         try:
-#             await task
-#         except asyncio.CancelledError:
-#             print("main(): cancel_me is cancelled now")
+def getTemperature():
+    r = r_high / (65535 / float(adc.value) - 1)
+    lnr = log(r / r25)
+    ts_C = int((-273.15 + 1 / (1 / 298.15 + lnr / beta)) + cal)
+    print(f"Temperature: {ts_C} C")
+    return ts_C
 
-asyncio.run(main())
+
+def calcSpeed(temp):
+    if temp < minTemp:
+        spd = minPercent
+    elif temp > maxTemp:
+        spd = maxPercent
+    else:
+        tPerc = ((temp - minTemp)) / (maxTemp - minTemp)
+        spd = ((maxPercent - minPercent) * tPerc) + minPercent
+    # print(f"speed set: {spd} for temp: {temp} C")
+    return spd
+
+
+while True:
+    temp = getTemperature()
+
+    if oldTemp != temp:
+        spd = calcSpeed(temp)
+        setFanSpeed(spd)
+        oldTemp = temp
+    sleep(2)
+# for temp in range (0,101):
+# spd = calcSpeed(temp)
